@@ -1,0 +1,10 @@
+dataset: BikeNYC
+topology: Grid
+model:
+  spatial: LocalCNN
+  temporal: AttentiveLSTM
+  layers: [4, 2]
+  hidden_dim: 128
+metrics:
+  MAE: 1.229
+  Params: 0.6074M
