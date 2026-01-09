@@ -147,7 +147,7 @@
       
       // Step 1: Retrieval & Analysis
       // 2. 检索阶段 (2.0秒) - 模拟数据库查询耗时
-      { type: 'log', delay: 2000, content: [
+      { type: 'log', delay: 3000, content: [
         { status: 'processing', text: "Analyzing Topological Constraints..." },
         { status: 'success', text: "Identified Topology: <strong>Grid-based</strong> (Euclidean Coordinates detected)." },
         { status: 'processing', text: "Querying Brick Registry & History Logs..." },
@@ -157,11 +157,11 @@
       ]},
 
       // Step 2: Assembly & Optimization
-      // 3. 开始组装提示 (1.0秒)
-      { type: 'text', delay: 1000, content: "Constructing Directed Acyclic Graph (DAG) based on retrieved anchors and accuracy-first strategy..." },
+      // 3. 开始组装提示 (2.0秒)
+      { type: 'text', delay: 2000, content: "Constructing Directed Acyclic Graph (DAG) based on retrieved anchors and accuracy-first strategy..." },
       
-      // 4. 核心计算阶段 (3.5秒) - 模拟最耗时的组装、编译和测试过程
-      { type: 'log', delay: 3500, content: [
+      // 4. 核心计算阶段 (5.5秒) - 模拟最耗时的组装、编译和测试过程
+      { type: 'log', delay: 5500, content: [
         { status: 'processing', text: "<strong>Trial Assembly:</strong> { Spatial: LocalCNN, Temporal: AttentiveLSTM }" },
         { status: 'processing', text: "Hyperparameter Search: Hidden Dim=128, Spatial Layers=4, Temporal Layers=2" },
         { status: 'success', text: "Syntax Check: PASSED" },
@@ -171,7 +171,7 @@
 
       // Step 3: Final Output
       // 5. 最终呈现 (1.5秒)
-      { type: 'final', delay: 1500, content: "Optimization Complete. The model <strong>AutoBricks-BikeNYC-V1</strong> has been generated." }
+      { type: 'final', delay: 2500, content: "Optimization Complete. The model <strong>AutoBricks-BikeNYC-V1</strong> has been generated." }
     ]
   };
 
