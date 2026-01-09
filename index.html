@@ -138,14 +138,16 @@
   const input = document.getElementById('userInput');
   const sendBtn = document.getElementById('sendBtn');
 
-  // --- BikeNYC-I 定制剧本 ---
+  // --- BikeNYC-I 定制剧本 (优化时间间隔) ---
   const demoScript = {
     trigger: ["bike", "nyc", "自行车", "纽约"], 
     flow: [
-      { type: 'text', delay: 200, content: "Received task: <strong>Bike Usage Forecasting in NYC (BikeNYC-I)</strong>. <br>Initializing AutoBricks framework..." },
+      // 1. 快速响应收到指令 (0.6秒)
+      { type: 'text', delay: 600, content: "Received task: <strong>Bike Usage Forecasting in NYC (BikeNYC-I)</strong>. <br>Initializing AutoBricks framework..." },
       
       // Step 1: Retrieval & Analysis
-      { type: 'log', delay: 800, content: [
+      // 2. 检索阶段 (2.0秒) - 模拟数据库查询耗时
+      { type: 'log', delay: 2000, content: [
         { status: 'processing', text: "Analyzing Topological Constraints..." },
         { status: 'success', text: "Identified Topology: <strong>Grid-based</strong> (Euclidean Coordinates detected)." },
         { status: 'processing', text: "Querying Brick Registry & History Logs..." },
@@ -155,9 +157,11 @@
       ]},
 
       // Step 2: Assembly & Optimization
-      { type: 'text', delay: 1200, content: "Constructing Directed Acyclic Graph (DAG) based on retrieved anchors and accuracy-first strategy..." },
+      // 3. 开始组装提示 (1.0秒)
+      { type: 'text', delay: 1000, content: "Constructing Directed Acyclic Graph (DAG) based on retrieved anchors and accuracy-first strategy..." },
       
-      { type: 'log', delay: 1000, content: [
+      // 4. 核心计算阶段 (3.5秒) - 模拟最耗时的组装、编译和测试过程
+      { type: 'log', delay: 3500, content: [
         { status: 'processing', text: "<strong>Trial Assembly:</strong> { Spatial: LocalCNN, Temporal: AttentiveLSTM }" },
         { status: 'processing', text: "Hyperparameter Search: Hidden Dim=128, Spatial Layers=4, Temporal Layers=2" },
         { status: 'success', text: "Syntax Check: PASSED" },
@@ -166,7 +170,8 @@
       ]},
 
       // Step 3: Final Output
-      { type: 'final', delay: 800, content: "Optimization Complete. The model <strong>AutoBricks-BikeNYC-V1</strong> has been generated." }
+      // 5. 最终呈现 (1.5秒)
+      { type: 'final', delay: 1500, content: "Optimization Complete. The model <strong>AutoBricks-BikeNYC-V1</strong> has been generated." }
     ]
   };
 
@@ -179,9 +184,11 @@
     const text = input.value.trim();
     if (!text) return;
 
+    // 1. 上屏用户消息
     addMessage('user', text);
     input.value = '';
     
+    // 2. 锁定按钮
     input.disabled = true;
     sendBtn.disabled = true;
     sendBtn.innerText = "Generating...";
@@ -189,11 +196,13 @@
     sendBtn.style.background = "#ccc";
 
     try {
+      // 3. 执行逻辑
       await processAutoBricksLogic(text);
     } catch (e) {
-      console.error(e);
+      console.error(e); 
       addMessage('bot', `<span style="color:red">Error: ${e.message}</span>`);
     } finally {
+      // 4. 解锁按钮
       input.disabled = false;
       sendBtn.disabled = false;
       sendBtn.innerText = "Generate";
@@ -209,7 +218,7 @@
     
     if (isTriggered) {
       for (const step of demoScript.flow) {
-        await sleep(step.delay || 1000);
+        await sleep(step.delay || 1000); // 使用每个步骤定义的 delay
         
         if (step.type === 'text') {
           addMessage('bot', step.content);
@@ -269,7 +278,7 @@
     return logDiv;
   }
 
-  // --- 生成下载卡片 (已修改为指向真实文件) ---
+  // --- 生成下载卡片 ---
   function appendDownloadCards(parentDiv) {
     const container = document.createElement('div');
     container.style.marginTop = "15px";
@@ -277,7 +286,7 @@
     container.style.gap = "10px";
     container.style.flexWrap = "wrap";
 
-    // Card 1: Config Yaml (保持虚拟文件，除非你也创建了 config 文件)
+    // Card 1: Config Yaml
     const configCard = document.createElement('a');
     configCard.className = 'file-card';
     const configContent = `dataset: BikeNYC\ntopology: Grid\nmodel:\n  spatial: LocalCNN\n  temporal: AttentiveLSTM\n  layers: [4, 2]\n  hidden_dim: 128\nmetrics:\n  MAE: 1.229\n  Params: 0.6074M`;
@@ -291,19 +300,16 @@
       </div>
     `;
 
-    // Card 2: Python Code (★ 修改处：指向真实文件)
+    // Card 2: Python Code
     const codeCard = document.createElement('a');
     codeCard.className = 'file-card';
-    
-    // 这里指向你刚才截图里的 models 文件夹下的文件
-    codeCard.href = './models/AutoBricks_Generated.py'; 
-    codeCard.download = 'AutoBricks_Generated.py';
-    codeCard.target = '_blank'; // 新窗口打开，以防浏览器直接预览
-    
+    const pyContent = `import torch\nimport torch.nn as nn\n\n# AutoBricks Generated Model for BikeNYC\nclass AutoBricksModel(nn.Module):\n    def __init__(self):\n        super().__init__()\n        # Spatial Brick: LocalCNN (Selected for Grid Topology)\n        self.spatial = LocalCNN(in_channels=2, out_channels=128, layers=4)\n        \n        # Temporal Brick: AttentiveLSTM (Selected for Sequence)\n        self.temporal = AttentiveLSTM(hidden_dim=128, layers=2)\n        \n        self.fusion = nn.Linear(128, 1)\n\n    def forward(self, x):\n        x = self.spatial(x)\n        x = self.temporal(x)\n        return self.fusion(x)`;
+    codeCard.href = 'data:text/x-python;charset=utf-8,' + encodeURIComponent(pyContent);
+    codeCard.download = 'model_bikenyc.py';
     codeCard.innerHTML = `
       <span class="file-icon">🐍</span>
       <div class="file-info">
-        <div>AutoBricks_Generated.py</div>
+        <div>model.py</div>
         <div>Executable PyTorch Code</div>
       </div>
     `;
